@@ -70,6 +70,7 @@ const MemberList = () => {
                             <tr>
                                 <th>Reg #</th>
                                 <th>Name</th>
+                                <th>Mobile</th>
                                 <th>Registration Date</th>
                                 <th>Address</th>
                                 <th>Actions</th>
@@ -80,6 +81,7 @@ const MemberList = () => {
                                 <tr key={member.id}>
                                     <td>#{member.registrationNumber}</td>
                                     <td style={{ fontWeight: '500' }}>{member.firstName} {member.lastName}</td>
+                                    <td>{member.mobileNumber || '-'}</td>
                                     <td>{new Date(member.registrationDate).toLocaleDateString()}</td>
                                     <td>{member.address}</td>
                                     <td>

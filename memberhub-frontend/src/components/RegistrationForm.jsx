@@ -13,7 +13,8 @@ const RegistrationForm = () => {
         lastName: '',
         registrationNumber: '',
         registrationDate: new Date().toISOString().split('T')[0],
-        address: ''
+        address: '',
+        mobileNumber: ''
     });
 
     const [loading, setLoading] = useState(false);
@@ -36,7 +37,8 @@ const RegistrationForm = () => {
                 lastName: member.lastName,
                 registrationNumber: member.registrationNumber || '',
                 registrationDate: new Date(member.registrationDate).toISOString().split('T')[0],
-                address: member.address || ''
+                address: member.address || '',
+                mobileNumber: member.mobileNumber || ''
             });
         } catch (err) {
             console.error("Failed to fetch member:", err);
@@ -169,6 +171,18 @@ const RegistrationForm = () => {
                             required
                         />
                     </div>
+                </div>
+
+                <div className="form-group">
+                    <label className="form-label" htmlFor="mobileNumber">Mobile Number (Optional)</label>
+                    <input
+                        type="tel"
+                        id="mobileNumber"
+                        name="mobileNumber"
+                        className="form-input"
+                        value={formData.mobileNumber}
+                        onChange={handleChange}
+                    />
                 </div>
 
                 <div className="form-group">

@@ -24,5 +24,8 @@ namespace MemberHub.Api.Models
 
         [MaxLength(200)]
         public string Address { get; set; } = string.Empty;
+
+        [MaxLength(20)]
+        public string? MobileNumber { get; set; }
     }
 }
