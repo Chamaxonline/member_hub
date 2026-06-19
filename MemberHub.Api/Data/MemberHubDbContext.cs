@@ -10,5 +10,14 @@ namespace MemberHub.Api.Data
         }
 
         public DbSet<Member> Members { get; set; }
+        public DbSet<MemberMonthlyRecord> MemberMonthlyRecords { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<MemberMonthlyRecord>()
+                .HasIndex(r => new { r.MemberId, r.Year, r.Month })
+                .IsUnique();
+        }
     }
 }
+

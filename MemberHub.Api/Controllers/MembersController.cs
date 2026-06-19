@@ -18,9 +18,45 @@ namespace MemberHub.Api.Controllers
 
         // GET: api/Members
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Member>>> GetMembers()
+        public async Task<ActionResult<PagedResult<Member>>> GetMembers(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? search = null)
         {
-            return await _context.Members.ToListAsync();
+            var query = _context.Members.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim();
+                var parsedDate = DateTime.TryParse(term, out var searchDate);
+
+                query = query.Where(m =>
+                    m.FirstName.Contains(term) ||
+                    m.LastName.Contains(term) ||
+                    (m.FirstName + " " + m.LastName).Contains(term) ||
+                    m.Address.Contains(term) ||
+                    (m.MobileNumber != null && m.MobileNumber.Contains(term)) ||
+                    m.RegistrationNumber.ToString().Contains(term) ||
+                    (parsedDate && m.RegistrationDate.Date == searchDate.Date) ||
+                    m.RegistrationDate.Year.ToString().Contains(term) ||
+                    m.RegistrationDate.Month.ToString().Contains(term) ||
+                    m.RegistrationDate.Day.ToString().Contains(term));
+            }
+
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .OrderByDescending(m => m.RegistrationDate)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<Member>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                Page = page,
+                PageSize = pageSize
+            };
         }
 
         // GET: api/Members/5

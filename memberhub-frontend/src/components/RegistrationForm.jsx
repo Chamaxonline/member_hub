@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createMember, getMember, updateMember } from '../api';
-import { Save, X } from 'lucide-react';
+import { Save, UserPlus, X } from 'lucide-react';
+import PageHeader from './PageHeader';
+import Alert from './Alert';
 
 const RegistrationForm = () => {
     const { id } = useParams();
@@ -50,10 +52,7 @@ const RegistrationForm = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
@@ -78,9 +77,7 @@ const RegistrationForm = () => {
                 setSuccess('Member registered successfully!');
             }
 
-            setTimeout(() => {
-                navigate('/');
-            }, 1000);
+            setTimeout(() => navigate('/directory'), 1000);
         } catch (err) {
             console.error("Submit error:", err);
             setError('Failed to save member. Please check your inputs.');
@@ -98,28 +95,23 @@ const RegistrationForm = () => {
     }
 
     return (
-        <div className="animate-fade-in" style={{ maxWidth: '600px', margin: '0 auto' }}>
-            <h2 className="title-gradient" style={{ marginBottom: '0.5rem' }}>
-                {isEditMode ? 'Edit Member' : 'Member Registration'}
-            </h2>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
-                {isEditMode ? 'Update the details for this member.' : 'Enter details to register a new member in the system.'}
-            </p>
+        <div className="animate-fade-in form-page">
+            <PageHeader
+                eyebrow={isEditMode ? 'Edit' : 'Registration'}
+                title={isEditMode ? 'Edit Member' : 'Member Registration'}
+                subtitle={isEditMode
+                    ? 'Update registration details for this member.'
+                    : 'Enter member information to add them to the directory.'}
+                icon={UserPlus}
+                backTo={isEditMode ? '/directory' : '/'}
+                backLabel={isEditMode ? 'Back to Directory' : 'Back to Menu'}
+            />
 
-            {error && (
-                <div className="glass-panel" style={{ padding: '1rem', marginBottom: '1.5rem', borderColor: 'var(--danger)', backgroundColor: 'rgba(239, 68, 68, 0.1)' }}>
-                    <p style={{ color: 'var(--danger)', margin: 0 }}>{error}</p>
-                </div>
-            )}
+            {error && <Alert type="error">{error}</Alert>}
+            {success && <Alert type="success">{success}</Alert>}
 
-            {success && (
-                <div className="glass-panel" style={{ padding: '1rem', marginBottom: '1.5rem', borderColor: 'var(--success)', backgroundColor: 'rgba(16, 185, 129, 0.1)' }}>
-                    <p style={{ color: 'var(--success)', margin: 0 }}>{success}</p>
-                </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="glass-panel">
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <form onSubmit={handleSubmit} className="glass-panel panel-static">
+                <div className="form-grid-2">
                     <div className="form-group">
                         <label className="form-label" htmlFor="firstName">First Name</label>
                         <input
@@ -146,7 +138,7 @@ const RegistrationForm = () => {
                     </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="form-grid-2">
                     <div className="form-group">
                         <label className="form-label" htmlFor="registrationNumber">Registration Number</label>
                         <input
@@ -182,6 +174,7 @@ const RegistrationForm = () => {
                         className="form-input"
                         value={formData.mobileNumber}
                         onChange={handleChange}
+                        placeholder="07XXXXXXXX"
                     />
                 </div>
 
@@ -195,11 +188,11 @@ const RegistrationForm = () => {
                         onChange={handleChange}
                         rows="3"
                         style={{ resize: 'vertical' }}
-                    ></textarea>
+                    />
                 </div>
 
-                <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', justifyContent: 'flex-end' }}>
-                    <button type="button" className="btn btn-secondary" onClick={() => navigate('/')}>
+                <div className="form-actions">
+                    <button type="button" className="btn btn-secondary" onClick={() => navigate(isEditMode ? '/directory' : '/')}>
                         <X size={18} /> Cancel
                     </button>
                     <button type="submit" className="btn btn-primary" disabled={loading}>
